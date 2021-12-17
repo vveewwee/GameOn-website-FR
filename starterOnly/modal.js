@@ -30,9 +30,7 @@ function closeModal(){
   modalbg.style.display = "none";
 }
 
-//create a function validate();
-
-//collect Elements
+//get Elements
 // #first-prenom, #last-nom, #email-email, #birthdate-datedenai, #quantity, #location
 const first= document.getElementById("first");
 const last = document.getElementById("last");
@@ -42,7 +40,7 @@ const quant = document.getElementById("quantity");
 const checkR = document.getElementById("checkbox1");
 const checkF = document.getElementById("checkbox2");
 
-//change color validation
+//change Validation Colors, used for confirmation of submission
 
 const colors = ["#dbf6d1","#f9dddb"];
 
@@ -79,6 +77,7 @@ const radioErrorSpan = document.getElementById("radioErrorMsg");
 const checkError = "Vous devez vérifier que vous acceptez les termes et conditions.";
 const checkErrorSpan = document.getElementById("check1"); 
 
+// display Error Span
 function displayError(e, msg){
   var elemStyle = {
    color: "red",
@@ -95,6 +94,7 @@ function displayError(e, msg){
   return e;
 }
 
+//hide Error Span
 function hideError(e){
   if (e.style.display != "none"){
     e.style.display = "none";
@@ -135,7 +135,6 @@ email.addEventListener("change", function(e){
 });
 
 //Date validation
-
 date.addEventListener("input", function(e){
   if(/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/.test(e.target.value)){
     hideError(dateErrorSpan);
@@ -157,25 +156,21 @@ quant.addEventListener("keyup", function(e){
     displayError(quantErrorSpan, quantError);
      validationColors(quant,false);}
  });
-/*
+
 //(5) Un bouton radio est sélectionné.
- document.querySelectorAll(".checkbox-input").forEach(function(item){
-  item.addEventListener("click", function (e){
-  var result = 0;
-  for(var i=0; i < e.length; i++){
-    if(e[i].checked){
-      result++;
-    }
-  }
-    if (result != 1){
+function radioValidation(){
+  var rad = document.getElementsByName("location");
+  for(var i = 0; i < rad.length; i++){
+    if(rad[i].checked === false){
       displayError(radioErrorSpan, radioError);
       return false;
     }else{
       hideError(radioErrorSpan);
       return true;
     }
-});});
-*/
+  }
+}
+
 //(6) La case des conditions générales est cochée, l'autre case est facultative / peut être laissée décochée.
 checkR.addEventListener("click", function(e){
   if(!(e.target.checked)){
@@ -188,32 +183,19 @@ checkR.addEventListener("click", function(e){
 });
 
 //Le formulaire doit être valide quand l'utilisateur clique sur "Submit"
-
-submitBtn.addEventListener("click", function(){
+submitBtn.addEventListener("click", function validate(){
+  radioValidation();
   if(first.style.border == '2px solid green' &&
     last.style.border == '2px solid green' &&
     email.style.border == '2px solid green' &&
      date.style.border == '2px solid green' &&
     quant.style.border == '2px solid green' &&
-    checkR.checked === true){
-  alert("Merci ! Votre réservation a été reçue.");
- class Client{
-  constructor(nom, prénom, email, date, quantity, location, conditions){
-    this.nom = nom;
-    this.prénom = prénom;
-    this.email = email;
-    this.date = date;
-    this.quantity = quantity;
-    this.location = location;
-    this. conditions = conditions;
-  }
-}
-
-const clientInfo = new Client(first, last, email, date, quant, locat, checkR);
+    checkR.checked === true && radioValidation()){
+    alert("Merci ! Votre réservation a été reçue.");
     closeModal();
-  return true;
+    return true;
   }else{
-    alert("invalid form");
+   alert("Invalid form");
   }
 });
 //Conserver les données du formulaire (ne pas effacer le formulaire) lorsqu'il ne passe pas la validation.
@@ -226,24 +208,36 @@ const clientInfo = new Client(first, last, email, date, quant, locat, checkR);
 /-------------*/
 
 /*
-//(5) Un bouton radio est sélectionné.
- function countRadio(){
-   document.querySelectorAll(".checkbox-input").forEach(function(e){
-  var result = 0;
-  for(var i=0; i < e.length; i++){
-    if(e[i].checked){
-      result++;
-    }
-    return result;
-  }});
- }
-document.getElementByName("location").addEventListener("click", function()
-{ let result = countRadio();
-  if (result != 1){
-      displayError(radioErrorSpan, radioError);
-      return false;
-    }else{
-      hideError(radioErrorSpan);
-      return true;
-    }
-});*/
+
+//create a class Client for storing info
+class Client{
+  constructor(nom, prénom, email, date, quantity, location, conditions){
+    this.nom = nom;
+    this.prénom = prénom;
+    this.email = email;
+    this.date = date;
+    this.quantity = quantity;
+    this.location = location;
+    this. conditions = conditions;
+  }
+}
+
+  const clientInfo = new Client;
+  
+  const firstValue = [];
+  const lastValue = [];
+  const emailValue = [];
+  const dateValue = [];
+  const quantValue = [];
+  const radValue = [];
+  const condValue = false;     
+  
+  clientInfo.push(firstValue);
+  clientInfo.push(lastValue);
+  clientInfo.push(emailValue);
+  clientInfo.push(dateValue);
+  clientInfo.push(quantValue);
+  clientInfo.push(radValue);
+  clientInfo.push(condValue);
+  
+  */
