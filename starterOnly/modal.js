@@ -12,6 +12,7 @@ const modalbg = document.querySelector(".bground");
 const modalBtn = document.querySelectorAll(".modal-btn");
 const formData = document.querySelectorAll(".formData");
 const closeBtn = document.querySelector(".close");
+const submitBtn = document.querySelector(".btn-submit");
 
 // launch modal event
 modalBtn.forEach((btn) => btn.addEventListener("click", launchModal));
@@ -32,27 +33,30 @@ function closeModal(){
 //create a function validate();
 
 //collect Elements
-// #first-prenom, #last-nom, #email-email, #birthdate-date de na, #location1-->6
+// #first-prenom, #last-nom, #email-email, #birthdate-datedenai, #quantity, #location
 const first= document.getElementById("first");
 const last = document.getElementById("last");
 const email = document.getElementById("email");
-const date = document.getElementById("birthday-date");
+const date = document.getElementById("birthdate");
 const quant = document.getElementById("quantity");
-const location = document.getElementById("location");
-const conditions = document.getElementById("conditions");
+const checkR = document.getElementById("checkbox1");
+const checkF = document.getElementById("checkbox2");
 
 //change color validation
 
-const colors = ["#f3baba","#bef6a5"];
+const colors = ["#dbf6d1","#f9dddb"];
 
-function validationColors(e){
-  if(e){
-    first.style.backgroundColor = colors[1];
+function validationColors(e, a){
+  if(e && a){
+    e.style.backgroundColor = colors[0];
+    e.style.border= '2px solid green';
   }else{
-    first.style.backgroundColor = colors[0];
+    e.style.backgroundColor = colors[1];
+    e.style.border= '2px solid red';
   }
 }
 
+//Create error messages
 /*Des messages d'erreur spécifiques doivent apparaître sous l'entrée qui n'est pas correcte. Les messages d'erreur doivent s'afficher sous le champ de saisie associé. Exemples :
 
     "Veuillez entrer 2 caractères ou plus pour le champ du nom."
@@ -60,48 +64,140 @@ function validationColors(e){
     "Vous devez vérifier que vous acceptez les termes et conditions."
     "Vous devez entrer votre date de naissance."
 */
+const firstError = "Veuillez entrer 2 caractères ou plus pour le champ du nom.";
+const firstErrorSpan= document.getElementById("firstErrorMsg");
+const lastError = "Veuillez entrer 2 caractères ou plus pour le champ du prénom.";
+const lastErrorSpan = document.getElementById("lastErrorMsg");
+const emailError = "Veuillez entrer un email valid.";
+const emailErrorSpan= document.getElementById("emailErrorMsg");
+const dateError = "Vous devez entrer votre date de naissance. DD/MM/YYYY";
+const dateErrorSpan = document.getElementById("dateErrorMsg");
+const quantError = "Veuillez entrer des characters numeriques !";
+const quantErrorSpan = document.getElementById("quantErrorMsg");
+const radioError = "Vous devez choisir une option.";
+const radioErrorSpan = document.getElementById("radioErrorMsg");
+const checkError = "Vous devez vérifier que vous acceptez les termes et conditions.";
+const checkErrorSpan = document.getElementById("check1"); 
+
+function displayError(e, msg){
+  var elemStyle = {
+   color: "red",
+   display :"block",
+   position: "relative",
+   fontSize: "10pt",
+   fontFamily: "Arial"
+   }
+  
+  for(let style in elemStyle){
+    e.style[style] = elemStyle[style];
+  }
+  e.innerText = msg;
+  return e;
+}
+
+function hideError(e){
+  if (e.style.display != "none"){
+    e.style.display = "none";
+  }
+}
 
 //(1) Le champ Prénom a un minimum de 2 caractères / n'est pas vide.
 first.addEventListener("change", function(e){
   if(e.target.value.length < 2){
-    alert("Veuillez entrer 2 caractères ou plus pour le champ du nom.");
-    validationColors(false);
+    displayError(firstErrorSpan, firstError);
+    validationColors(first, false);
   }else{
-    validationColors(true);
+    hideError(firstErrorSpan);
+    validationColors(first, true);
   }
 });
 
 //(2) Le champ du nom de famille a un minimum de 2 caractères / n'est pas vide.
 last.addEventListener("change", function(e){
   if(e.target.value.length < 2){
-    alert("Veuillez entrer 2 caractères ou plus pour le champ du prénom.");}
+    displayError(lastErrorSpan, lastError);
+    validationColors(last, false);}
+  else{
+    hideError(lastErrorSpan);
+    validationColors(last,true);
+  }
   });
 
 //(3) L'adresse électronique est valide.
 email.addEventListener("change", function(e){
   if(/\S+@\S+\.\S+/.test(e.target.value)){
+    validationColors(email, true);
+    hideError(emailErrorSpan);
+  }else{
+    displayError(emailErrorSpan, emailError);
+    validationColors(email, false);
+  }
+});
+
+//Date validation
+
+date.addEventListener("input", function(e){
+  if(/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/.test(e.target.value)){
+    hideError(dateErrorSpan);
+    validationColors(date, true);
     return true;
   }else{
-    alert("not right email");
+    displayError(dateErrorSpan, dateError);
+    validationColors(date, false);
+    return false;
   }
 });
 
 //(4) Pour le nombre de concours, une valeur numérique est saisie.
+quant.addEventListener("keyup", function(e){
+  if (/^[0-9]+(\.[0-9]{0,3})?$/.test(e.target.value)){
+    hideError(quantErrorSpan);
+    validationColors(quant,true);}
+  else{
+    displayError(quantErrorSpan, quantError);
+     validationColors(quant,false);}
+ });
+/*
 //(5) Un bouton radio est sélectionné.
+ document.querySelectorAll(".checkbox-input").forEach(function(item){
+  item.addEventListener("click", function (e){
+  var result = 0;
+  for(var i=0; i < e.length; i++){
+    if(e[i].checked){
+      result++;
+    }
+  }
+    if (result != 1){
+      displayError(radioErrorSpan, radioError);
+      return false;
+    }else{
+      hideError(radioErrorSpan);
+      return true;
+    }
+});});
+*/
 //(6) La case des conditions générales est cochée, l'autre case est facultative / peut être laissée décochée.
+checkR.addEventListener("click", function(e){
+  if(!(e.target.checked)){
+    displayError(checkErrorSpan, checkError);
+    return false;
+  }else{
+    hideError(checkErrorSpan);
+    return true;
+  }
+});
 
 //Le formulaire doit être valide quand l'utilisateur clique sur "Submit"
 
-//Conserver les données du formulaire (ne pas effacer le formulaire) lorsqu'il ne passe pas la validation.
-
-//Après une validation réussie, inclure un message de confirmation de la soumission réussie pour l'utilisateur (ex. "Merci ! Votre réservation a été reçue.")
-
-/*-------------/
-    Visualiser et tester l'interface utilisateur dans les dernières versions de Chrome et de Firefox, ainsi que dans les versions mobile et desktop. Corriger les erreurs d'affichage existantes.
-   Tester toutes les fonctionnalités des boutons et des entrées de formulaire (tester les valeurs correctes et incorrectes)
-/-------------*/
-
-class Client{
+submitBtn.addEventListener("click", function(){
+  if(first.style.border == '2px solid green' &&
+    last.style.border == '2px solid green' &&
+    email.style.border == '2px solid green' &&
+     date.style.border == '2px solid green' &&
+    quant.style.border == '2px solid green' &&
+    checkR.checked === true){
+  alert("Merci ! Votre réservation a été reçue.");
+ class Client{
   constructor(nom, prénom, email, date, quantity, location, conditions){
     this.nom = nom;
     this.prénom = prénom;
@@ -113,4 +209,41 @@ class Client{
   }
 }
 
-const clientInfo = new Client(first, last, email, date, quantity, location, conditions);
+const clientInfo = new Client(first, last, email, date, quant, locat, checkR);
+    closeModal();
+  return true;
+  }else{
+    alert("invalid form");
+  }
+});
+//Conserver les données du formulaire (ne pas effacer le formulaire) lorsqu'il ne passe pas la validation.
+
+//Après une validation réussie, inclure un message de confirmation de la soumission réussie pour l'utilisateur (ex. "Merci ! Votre réservation a été reçue.")
+
+/*-------------/
+    Visualiser et tester l'interface utilisateur dans les dernières versions de Chrome et de Firefox, ainsi que dans les versions mobile et desktop. Corriger les erreurs d'affichage existantes.
+   Tester toutes les fonctionnalités des boutons et des entrées de formulaire (tester les valeurs correctes et incorrectes)
+/-------------*/
+
+/*
+//(5) Un bouton radio est sélectionné.
+ function countRadio(){
+   document.querySelectorAll(".checkbox-input").forEach(function(e){
+  var result = 0;
+  for(var i=0; i < e.length; i++){
+    if(e[i].checked){
+      result++;
+    }
+    return result;
+  }});
+ }
+document.getElementByName("location").addEventListener("click", function()
+{ let result = countRadio();
+  if (result != 1){
+      displayError(radioErrorSpan, radioError);
+      return false;
+    }else{
+      hideError(radioErrorSpan);
+      return true;
+    }
+});*/
