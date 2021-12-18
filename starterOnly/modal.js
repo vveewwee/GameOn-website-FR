@@ -148,7 +148,7 @@ date.addEventListener("input", function(e){
 });
 
 //(4) Pour le nombre de concours, une valeur numérique est saisie.
-quant.addEventListener("keyup", function(e){
+quant.addEventListener("change", function(e){
   if (/^[0-9]+(\.[0-9]{0,3})?$/.test(e.target.value)){
     hideError(quantErrorSpan);
     validationColors(quant,true);}
@@ -158,16 +158,24 @@ quant.addEventListener("keyup", function(e){
  });
 
 //(5) Un bouton radio est sélectionné.
-function radioValidation(){
-  var rad = document.getElementsByName("location");
+function radioCount(){
+  var radioNum = 0;
+  var rad = document.querySelectorAll('input[name="location"]');
   for(var i = 0; i < rad.length; i++){
-    if(rad[i].checked === false){
-      displayError(radioErrorSpan, radioError);
-      return false;
-    }else{
-      hideError(radioErrorSpan);
-      return true;
+    if(rad[i].checked){
+    radioNum++;
     }
+  }
+  return radioNum;
+}
+
+function radioValidation(){
+if(radioCount() != 1){
+    displayError(radioErrorSpan, radioError);
+    return false;
+  }else{
+    hideError(radioErrorSpan);
+    return true;
   }
 }
 
@@ -182,6 +190,71 @@ checkR.addEventListener("click", function(e){
   }
 });
 
+// create element msg validation && remove child && close modal btn
+function showMsg(){
+  let bigDiv = document.createElement("div");
+  let msgDiv = document.createElement("div");
+  let msgText = document.createTextNode("Merci ! Votre réservation a été reçue.");
+  let msgBtn = document.createElement("button");
+  
+    msgDiv.append(msgText, msgBtn);
+    bigDiv.appendChild(msgDiv);
+  
+    bigDiv.style.width="100%";
+    bigDiv.style.position ="absolute";
+    bigDiv.style.top = "50%";
+    bigDiv.style.display ="flex";
+    bigDiv.style.flexFlow ="column nowrap";
+    bigDiv.style.justifyContent="center";
+    bigDiv.style.alignItems="center";
+
+    msgDiv.style.fontFamily = "DM Sans, Arial";
+    msgDiv.style.fontSize = "14pt";
+    msgDiv.style.color = "white";
+    msgDiv.style.backgroundColor= "black";
+    msgDiv.style.opacity= "0.9";
+    msgDiv.style.maxWidth = "500px";
+    msgDiv.style.width = "100%";
+    msgDiv.style.height = "100%";
+    msgDiv.style.display = "flex";
+    msgDiv.style.flexFlow = "column nowrap";
+    msgDiv.style.justifyContent = "center";
+    msgDiv.style.alignItems = "center";
+    msgDiv.style.position ="fixed";
+    msgDiv.style.marginLeft = "auto";
+    msgDiv.style.marginRight = "auto";
+    msgDiv.style.float="center";
+    msgDiv.style.zIndex= "1";
+    msgDiv.style.borderRadius = "1rem";
+    
+    msgBtn.style.width = "70px";
+    msgBtn.style.height = "40px";
+    msgBtn.style.fontFamily = "DM Sans, Arial";
+    msgBtn.style.fontSize ="16px";
+    msgBtn.innerHTML = "OK";
+    msgBtn.style.borderStyle= "none";
+    msgBtn.style.borderRadius ="15px";
+    msgBtn.style.backgroundColor = "#fe142f";
+    msgBtn.style.color = "white";
+    msgBtn.style.marginTop="10%";
+    msgBtn.style.cursor = "pointer";
+   
+    modalbg.appendChild(bigDiv);
+    msgBtn.addEventListener("mouseenter", function(){
+      msgBtn.style.backgroundColor = "#3876ac";
+    });
+    msgBtn.addEventListener("mouseleave", function(){
+      msgBtn.style.backgroundColor = "#fe142f";
+    });
+    msgBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      modalbg.removeChild(bigDiv);
+      closeModal();
+    });
+    
+  }
+
+
 //Le formulaire doit être valide quand l'utilisateur clique sur "Submit"
 submitBtn.addEventListener("click", function validate(){
   radioValidation();
@@ -191,8 +264,7 @@ submitBtn.addEventListener("click", function validate(){
      date.style.border == '2px solid green' &&
     quant.style.border == '2px solid green' &&
     checkR.checked === true && radioValidation()){
-    alert("Merci ! Votre réservation a été reçue.");
-    closeModal();
+    showMsg();
     return true;
   }else{
    alert("Invalid form");
