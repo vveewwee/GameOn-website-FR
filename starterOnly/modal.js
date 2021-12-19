@@ -164,6 +164,7 @@ function radioCount(){
   for(var i = 0; i < rad.length; i++){
     if(rad[i].checked){
     radioNum++;
+    break ;
     }
   }
   return radioNum;
@@ -256,7 +257,7 @@ function showMsg(){
 
 
 //Le formulaire doit être valide quand l'utilisateur clique sur "Submit"
-submitBtn.addEventListener("click", function validate(){
+function validate(){
   radioValidation();
   if(first.style.border == '2px solid green' &&
     last.style.border == '2px solid green' &&
@@ -264,12 +265,10 @@ submitBtn.addEventListener("click", function validate(){
      date.style.border == '2px solid green' &&
     quant.style.border == '2px solid green' &&
     checkR.checked === true && radioValidation()){
-    showMsg();
-    return true;
-  }else{
-   alert("Invalid form");
+      showMsg();
   }
-});
+  return false ;
+}
 //Conserver les données du formulaire (ne pas effacer le formulaire) lorsqu'il ne passe pas la validation.
 
 //Après une validation réussie, inclure un message de confirmation de la soumission réussie pour l'utilisateur (ex. "Merci ! Votre réservation a été reçue.")
