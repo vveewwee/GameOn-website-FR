@@ -1,3 +1,10 @@
+//onload get forms
+let form = null;
+window.onload = function (){
+  form = document.forms["reserve"];
+}
+
+//navigation responsive
 function editNav() {
   let x = document.getElementById("myTopnav");
   if (x.className === "topnav") {
@@ -31,7 +38,6 @@ function closeModal(){
 }
 
 //get Elements
-// #first-prenom, #last-nom, #email-email, #birthdate-datedenai, #quantity, #location
 const first= document.getElementById("first");
 const last = document.getElementById("last");
 const email = document.getElementById("email");
@@ -40,8 +46,7 @@ const quant = document.getElementById("quantity");
 const checkR = document.getElementById("checkbox1");
 const checkF = document.getElementById("checkbox2");
 
-//change Validation Colors, used for confirmation of submission
-
+//change Validation Colors red,green
 const colors = ["#dbf6d1","#f9dddb"];
 
 function validationColors(e, a){
@@ -68,7 +73,7 @@ const lastError = "Veuillez entrer 2 caractères ou plus pour le champ du préno
 const lastErrorSpan = document.getElementById("lastErrorMsg");
 const emailError = "Veuillez entrer un email valid.";
 const emailErrorSpan= document.getElementById("emailErrorMsg");
-const dateError = "Vous devez entrer votre date de naissance. DD/MM/YYYY";
+const dateError = "Vous devez entrer votre date de naissance.";
 const dateErrorSpan = document.getElementById("dateErrorMsg");
 const quantError = "Veuillez entrer des characters numeriques !";
 const quantErrorSpan = document.getElementById("quantErrorMsg");
@@ -101,63 +106,77 @@ function hideError(e){
   }
 }
 
-//(1) Le champ Prénom a un minimum de 2 caractères / n'est pas vide.
-first.addEventListener("change", function(e){
-  if(e.target.value.length < 2){
+// Name validation
+function checkFirstName(){
+  const e = form.first;
+  if(e.value.trim().length < 2){
     displayError(firstErrorSpan, firstError);
     validationColors(first, false);
+    return false;
   }else{
     hideError(firstErrorSpan);
     validationColors(first, true);
+    return true;
   }
-});
+}
 
-//(2) Le champ du nom de famille a un minimum de 2 caractères / n'est pas vide.
-last.addEventListener("change", function(e){
-  if(e.target.value.length < 2){
+//Last name validation
+function checkLastName(){
+  const e = form.last;
+  if(e.value.trim().length < 2){
     displayError(lastErrorSpan, lastError);
-    validationColors(last, false);}
-  else{
+    validationColors(last, false);
+    return false;
+  }else{
     hideError(lastErrorSpan);
     validationColors(last,true);
+    return true;
   }
-  });
+}
 
-//(3) L'adresse électronique est valide.
-email.addEventListener("change", function(e){
-  if(/\S+@\S+\.\S+/.test(e.target.value)){
-    validationColors(email, true);
-    hideError(emailErrorSpan);
-  }else{
+//Email validation
+function checkEmail(){
+  const e = form.email;
+  if(/\S+@\S+\.\S+/.test(e.value.trim()) == false){
     displayError(emailErrorSpan, emailError);
     validationColors(email, false);
+    return false;
+  }else{
+    validationColors(email, true);
+    hideError(emailErrorSpan);
+    return true;
   }
-});
+}
 
 //Date validation
-date.addEventListener("input", function(e){
-  if(/^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/.test(e.target.value)){
-    hideError(dateErrorSpan);
-    validationColors(date, true);
-    return true;
-  }else{
+function checkBirthDate(){
+  const e = form.birthdate;
+  if(e.value.trim() == ""){
     displayError(dateErrorSpan, dateError);
     validationColors(date, false);
     return false;
+  }else{
+    hideError(dateErrorSpan);
+    validationColors(date, true);
+    return true;
   }
-});
+}
 
-//(4) Pour le nombre de concours, une valeur numérique est saisie.
-quant.addEventListener("change", function(e){
-  if (/^[0-9]+(\.[0-9]{0,3})?$/.test(e.target.value)){
+//Quantity validation
+ function checkQuantity(){
+   const e = form.quantity;
+  if (/^[0-9]+(\.[0-9]{0,3})?$/.test(e.value)){
     hideError(quantErrorSpan);
-    validationColors(quant,true);}
-  else{
+    validationColors(quant,true);
+    return true;
+  }else{
     displayError(quantErrorSpan, quantError);
-     validationColors(quant,false);}
- });
+    validationColors(quant,false);
+    return false;
+  }
+ }
 
-//(5) Un bouton radio est sélectionné.
+//Radio button validation
 function radioCount(){
   var radioNum = 0;
   var rad = document.querySelectorAll('input[name="location"]');
@@ -234,7 +253,7 @@ function showMsg(){
     msgBtn.style.fontSize ="16px";
     msgBtn.innerHTML = "OK";
     msgBtn.style.borderStyle= "none";
-    msgBtn.style.borderRadius ="15px";
+    msgBtn.style.borderRadius ="5px";
     msgBtn.style.backgroundColor = "#fe142f";
     msgBtn.style.color = "white";
     msgBtn.style.marginTop="10%";
@@ -252,63 +271,20 @@ function showMsg(){
       modalbg.removeChild(bigDiv);
       closeModal();
     });
-    
-  }
-
+}
 
 //Le formulaire doit être valide quand l'utilisateur clique sur "Submit"
+//Conserver les données du formulaire (ne pas effacer le formulaire) lorsqu'il ne passe pas la validation.
+//Après une validation réussie, inclure un message de confirmation de la soumission réussie pour l'utilisateur (ex. "Merci ! Votre réservation a été reçue.")
 function validate(){
-  radioValidation();
-  if(first.style.border == '2px solid green' &&
-    last.style.border == '2px solid green' &&
-    email.style.border == '2px solid green' &&
-     date.style.border == '2px solid green' &&
-    quant.style.border == '2px solid green' &&
-    checkR.checked === true && radioValidation()){
-      showMsg();
+  //debugger;
+  if (checkFirstName() & checkLastName() & checkEmail() & checkBirthDate() & checkQuantity() & (checkR.checked === true) & radioValidation()){
+    showMsg();
   }
   return false ;
 }
-//Conserver les données du formulaire (ne pas effacer le formulaire) lorsqu'il ne passe pas la validation.
-
-//Après une validation réussie, inclure un message de confirmation de la soumission réussie pour l'utilisateur (ex. "Merci ! Votre réservation a été reçue.")
 
 /*-------------/
     Visualiser et tester l'interface utilisateur dans les dernières versions de Chrome et de Firefox, ainsi que dans les versions mobile et desktop. Corriger les erreurs d'affichage existantes.
    Tester toutes les fonctionnalités des boutons et des entrées de formulaire (tester les valeurs correctes et incorrectes)
 /-------------*/
-
-/*
-
-//create a class Client for storing info
-class Client{
-  constructor(nom, prénom, email, date, quantity, location, conditions){
-    this.nom = nom;
-    this.prénom = prénom;
-    this.email = email;
-    this.date = date;
-    this.quantity = quantity;
-    this.location = location;
-    this. conditions = conditions;
-  }
-}
-
-  const clientInfo = new Client;
-  
-  const firstValue = [];
-  const lastValue = [];
-  const emailValue = [];
-  const dateValue = [];
-  const quantValue = [];
-  const radValue = [];
-  const condValue = false;     
-  
-  clientInfo.push(firstValue);
-  clientInfo.push(lastValue);
-  clientInfo.push(emailValue);
-  clientInfo.push(dateValue);
-  clientInfo.push(quantValue);
-  clientInfo.push(radValue);
-  clientInfo.push(condValue);
-  
-  */
