@@ -74,6 +74,7 @@ const lastErrorSpan = document.getElementById("lastErrorMsg");
 const emailError = "Veuillez entrer un email valid.";
 const emailErrorSpan= document.getElementById("emailErrorMsg");
 const dateError = "Vous devez entrer votre date de naissance.";
+const dateAgeError = "Vous devez avoir plus de 18 ans.";
 const dateErrorSpan = document.getElementById("dateErrorMsg");
 const quantError = "Veuillez entrer des characters numeriques !";
 const quantErrorSpan = document.getElementById("quantErrorMsg");
@@ -151,16 +152,26 @@ function checkEmail(){
 //Date validation
 function checkBirthDate(){
   const e = form.birthdate;
+  var birthDate = new Date(e.value);
+  var minDate = new Date();
+  var age = minDate.getFullYear() - birthDate.getFullYear();
+
   if(e.value.trim() == ""){
     displayError(dateErrorSpan, dateError);
     validationColors(date, false);
     return false;
-  }else{
-    hideError(dateErrorSpan);
-    validationColors(date, true);
-    return true;
   }
+  debugger;
+  if (age < 18){
+    displayError(dateErrorSpan, dateAgeError);
+    validationColors(date, false);
+    return false;
+  }
+  hideError(dateErrorSpan);
+  validationColors(date, true);
+  return true;
 }
+
 
 //Quantity validation
  function checkQuantity(){
@@ -269,6 +280,20 @@ function showMsg(){
     msgBtn.addEventListener("click", function(e){
       e.stopPropagation();
       modalbg.removeChild(bigDiv);
+      first.style.backgroundColor = "#FFFFFF";
+      first.style.borderStyle="none";
+      last.style.backgroundColor = "#FFFFFF";
+      last.style.borderStyle="none";
+      email.style.backgroundColor = "#FFFFFF";
+      email.style.borderStyle="none";
+      date.style.backgroundColor="#FFFFFF";
+      date.style.borderStyle="none";
+      quant.style.backgroundColor = "#FFFFFF";
+      quant.style.borderStyle="none";
+      /*const el = form.elements;
+      el.style.backgroundColor= "#FFFFFF";
+      el.style.borderStyle="none";*/
+      form.reset();
       closeModal();
     });
 }
